@@ -43,17 +43,17 @@ tags: ['splunk','splunk_enterprise']
 dependencies: {}
 
 # The URL of the originating SCM repository
-repository: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk-enterprise/
+repository: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk_enterprise/
 
 # The URL to any online docs
-documentation: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk-enterprise/README.md
+documentation: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk_enterprise/README.md
 
 # The URL to the homepage of the collection/project
-homepage: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk-enterprise/
+homepage: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk_enterprise/
 
 
 # The URL to the collection issue tracker
-issues: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk-enterprise/issues/
+issues: https://github.com/splunk-admin-scriptorium/ansible-collection-splunk_enterprise/issues/
 
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
