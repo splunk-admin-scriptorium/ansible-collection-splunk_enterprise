@@ -1,0 +1,124 @@
+---
+- name: "Update splunk-launch - SPLUNK_HOME"
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_HOME"
+    value: "{{ splunk_install_home }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - SPLUNK_OS_USER"
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_OS_USER"
+    value: "{{ splunk_install_user }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - SPLUNK_SERVER_NAME"
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_SERVER_NAME"
+    value: "{{ splunk_install_service_name }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - SPLUNK_DB"
+  when:
+    - splunk_install_dbpath is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_DB"
+    value: "{{ splunk_install_dbpath }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - SPLUNK_BINDIP"
+  when:
+    - splunk_install_bindip is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_BINDIP"
+    value: "{{ splunk_install_bindip }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - SPLUNK_FIPS"
+  when:
+    - splunk_install_fips is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_FIPS"
+    value: "{{ 1 if splunk_install_fips else 0 }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: " Update splunk-launch - PYTHONHTTPSVERIFY "
+  when:
+    - splunk_install_python_https_verify is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "PYTHONHTTPSVERIFY"
+    value: "{{ 1 if splunk_install_python_https_verify else 0 }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - PYTHONUTF8"
+  when:
+    - splunk_install_python_utf8 is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "PYTHONUTF8"
+    value: "{{ 1 if splunk_install_python_utf8 else 0 }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - SPLUNK_PYTHON_DONT_ESCAPE_PRINTABLE"
+  when:
+    - splunk_install_python_dont_escape_printable is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "SPLUNK_PYTHON_DONT_ESCAPE_PRINTABLE"
+    value: "{{ 1 if splunk_install_python_dont_escape_printable else 0 }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"
+
+- name: "Update splunk-launch - ENABLE_CPUSHARES"
+  when:
+    - splunk_install_enable_cpushares is defined
+  community.general.ini_file:
+    path: "{{ splunk_install_home }}/etc/splunk-launch.conf"
+    section: null
+    option: "ENABLE_CPUSHARES"
+    value: "{{ 1 if splunk_install_enable_cpushares else 0 }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+    state: "present"

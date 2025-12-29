@@ -1,0 +1,20 @@
+---
+# defaults file for splunk_service_config
+splunk_service_config_user: "{{ splunk_enterprise_user | default('splunk') }}"
+splunk_service_config_group: "{{ splunk_enterprise_group | default('splunk') }}"
+splunk_service_config_home: "{{ splunk_enterprise_home | default('/opt/splunk') }}"
+splunk_service_config_service_name: "{{ splunk_enterprise_service_name | default('splunkd') }}"
+
+splunk_service_config_backup_path: "/var/opt/splunk/backup/"
+
+splunk_service_config_systemd: true
+
+splunk_service_config_limit_memory: "{{ splunk_enterprise_service_limit_memory | default('8G') }}"
+splunk_service_config_limit_nofile: "{{ splunk_enterprise_service_limit_nofile | default(64000) }}"
+splunk_service_config_limit_nproc: "{{ splunk_enterprise_service_limit_nproc | default(16000) }}"
+splunk_service_config_limit_fsize: "{{ splunk_enterprise_service_limit_fsize | default('infinity') }}"
+splunk_service_config_limit_tasks: "{{ splunk_enterprise_service_limit_tasks | default(2048) }}"
+
+splunk_service_config_systemd_service_vars: []
+
+splunk_service_config_required_mounts: []

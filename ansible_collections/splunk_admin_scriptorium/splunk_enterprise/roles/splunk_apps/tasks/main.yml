@@ -1,0 +1,16 @@
+---
+# tasks file for splunk_apps
+- name: "Perform sanity check"
+  ansible.builtin.include_tasks: "sanity-check.yml"
+- name: "Disable builtin apps"
+  ansible.builtin.include_tasks: "disable-builtin.yml"
+- name: "Clean apps"
+  ansible.builtin.include_tasks: "clean-apps.yml"
+- name: "Install custom apps"
+  ansible.builtin.include_tasks: "install-custom-apps.yml"
+- name: "Install packaged apps"
+  ansible.builtin.include_tasks: "install-packaged-apps.yml"
+- name: "Disable custom apps"
+  ansible.builtin.include_tasks: "disable-custom.yml"
+- name: "Enable custom apps"
+  ansible.builtin.include_tasks: "enable-custom.yml"

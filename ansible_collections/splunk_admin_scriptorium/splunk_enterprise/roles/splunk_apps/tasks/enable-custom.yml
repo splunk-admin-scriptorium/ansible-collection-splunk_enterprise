@@ -1,0 +1,38 @@
+---
+- name: "Enable custom apps - create dirs"
+  when:
+    - splunk_apps_enable_custom is defined
+  ansible.builtin.file:
+    path: "{{ splunk_apps_home }}/etc/apps/{{ item }}/local/"
+    owner: "{{ splunk_apps_user }}"
+    group: "{{ splunk_apps_group }}"
+    state: "directory"
+    mode: "0700"
+  with_items: "{{ splunk_apps_enable_custom }}"
+  no_log: true
+
+- name: "Enable custom apps - create app.conf"
+  when:
+    - splunk_apps_enable_custom is defined
+  ansible.builtin.file:
+    path: "{{ splunk_apps_home }}/etc/apps/{{ item }}/local/app.conf"
+    owner: "{{ splunk_apps_user }}"
+    group: "{{ splunk_apps_group }}"
+    state: "touch"
+    mode: "0600"
+  with_items: "{{ splunk_apps_enable_custom }}"
+  no_log: true
+
+- name: "Enable custom apps"
+  when:
+    - splunk_apps_enable_custom is defined
+  community.general.ini_file:
+    path: "{{ splunk_apps_home }}/etc/apps/{{ item }}/local/app.conf"
+    section: "install"
+    option: "state"
+    value: "enabled"
+    owner: "{{ splunk_apps_user }}"
+    group: "{{ splunk_apps_group }}"
+    mode: "0600"
+    state: "present"
+  with_items: "{{ splunk_apps_enable_custom }}"

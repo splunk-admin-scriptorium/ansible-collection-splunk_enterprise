@@ -1,0 +1,94 @@
+---
+- name: "Read Splunk Install version from package"
+  when:
+    - splunk_install_version is not defined
+  ansible.builtin.set_fact:
+    splunk_install_version: "{{ (splunk_install_package_path | basename | split('-'))[1] }}"
+
+- name: "Check Splunk install dir"
+  ansible.builtin.stat:
+    path: "{{ splunk_install_home }}"
+  register: _splunk_install_dir_stat
+
+- name: "Check Manifest"
+  when:
+    - _splunk_install_dir_stat.stat.exists
+  ansible.builtin.stat:
+    path: "{{ splunk_install_home }}/{{ splunk_install_package_path | basename | replace('.rpm', '-manifest') | replace('.tgz', '-manifest') }}"
+  register: _splunk_install_manifest_file_stat
+
+- name: "Manifest not detected -> performing fresh install."
+  when:
+    - not _splunk_install_manifest_file_stat.stat.exists
+  ansible.builtin.set_fact:
+    _splunk_install_fresh: true
+
+- name: "Check Splunk verions file"
+  when:
+    - _splunk_install_dir_stat.stat.exists
+  ansible.builtin.stat:
+    path: "{{ splunk_install_home }}/etc/splunk.version"
+  register: _splunk_install_version_file_stat
+
+- name: "Read Splunk version file"
+  when:
+    - _splunk_install_dir_stat.stat.exists
+    - _splunk_install_version_file_stat.stat.exists
+  ansible.builtin.slurp:
+    src: "{{ splunk_install_home }}/etc/splunk.version"
+  register: _splunk_install_version_file
+
+- name: "Get Splunk version"
+  when:
+    - _splunk_install_dir_stat.stat.exists
+    - _splunk_install_version_file_stat.stat.exists
+  ansible.builtin.set_fact:
+    _splunk_install_version: "{{ (_splunk_install_version_file['content'] | b64decode | regex_search('VERSION=[^\\s]+') | split('='))[1] }}"
+
+- name: "Detected Splunk version"
+  when:
+    - _splunk_install_manifest_file_stat.stat.exists
+    - _splunk_install_dir_stat.stat.exists
+    - _splunk_install_version_file_stat.stat.exists
+  ansible.builtin.debug:
+    msg: "Detected Splunk version: {{ _splunk_install_version }}"
+
+- name: "Detected Splunk version"
+  when:
+    - _splunk_install_version is defined
+    - _splunk_install_version is version(splunk_install_version,"<")
+  ansible.builtin.set_fact:
+    _splunk_install_upgrade: true
+    _splunk_install_fresh: false
+
+- name: "Check install integrity"
+  tags: ['validate_integrity']
+  when:
+    - not ( _splunk_install_fresh is defined and _splunk_install_fresh )
+    - not ( _splunk_install_upgrade is defined and _splunk_install_upgrade )
+    - _splunk_install_manifest_file_stat.stat.exists
+  ansible.builtin.command: "{{ splunk_install_home }}/bin/splunk validate files"
+  changed_when: false
+  register: _splunk_install_validate_files_run
+
+- name: "Dirty install detected"
+  when:
+    - _splunk_install_validate_files_run is defined
+    - _splunk_install_validate_files_run.rc is defined
+    - _splunk_install_validate_files_run.rc != 0
+  ansible.builtin.debug:
+    msg: "{{  _splunk_install_validate_files_run.stdout }}"
+
+- name: "Dirty install detected - proceeding with upgrade"
+  when:
+    - _splunk_install_validate_files_run is defined
+    - _splunk_install_validate_files_run.rc is defined
+    - _splunk_install_validate_files_run.rc != 0
+  ansible.builtin.set_fact:
+    _splunk_install_upgrade: true
+    _splunk_install_fresh: false
+
+- name: "Check Splunk systemd service"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/{{ splunk_install_service_name }}.service"
+  register: _splunk_install_service_file_stat

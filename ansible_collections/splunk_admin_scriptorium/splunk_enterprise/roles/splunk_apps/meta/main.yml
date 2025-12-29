@@ -1,0 +1,8 @@
+galaxy_info:
+  author: "m-sojka"
+  description: "Configures Splunk applications"
+  issue_tracker_url: "https://github.com/splunk-admin-scriptorium/ansible-collection-splunk_enterprise/issue/tracker"
+  license: "AGPL-3.0-or-later"
+  min_ansible_version: "2.8"
+  galaxy_tags: []
+dependencies: []

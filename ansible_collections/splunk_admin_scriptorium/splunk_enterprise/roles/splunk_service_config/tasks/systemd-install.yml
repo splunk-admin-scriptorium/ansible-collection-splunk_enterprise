@@ -1,0 +1,40 @@
+---
+- name: "Check splunk systemd service status"
+  when:
+    - splunk_service_config_systemd
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/{{ splunk_service_config_service_name }}.service"
+  register: _splunk_service_config_service_stat
+  no_log: true
+
+- name: "Register Splunk for Systemd management"
+  when:
+    - splunk_service_config_systemd
+    - not _splunk_service_config_service_stat.stat.exists
+  ansible.builtin.command:
+    argv:
+      - "{{ splunk_service_config_home }}/bin/splunk"
+      - "enable"
+      - "boot-start"
+      - "-systemd-managed"
+      - "1"
+      - "-systemd-unit-file-name"
+      - "{{ splunk_service_config_service_name }}"
+      - "-user"
+      - "{{ splunk_service_config_user }}"
+      - "-group"
+      - "{{ splunk_service_config_group }}"
+    creates: "/etc/systemd/system/{{ splunk_service_config_service_name }}.service"
+
+- name: "Enable Splunk service - {{ splunk_service_config_service_name }}"
+  when:
+    - splunk_service_config_systemd
+  ansible.builtin.systemd:
+    name: "{{ splunk_service_config_service_name }}"
+    enabled: true
+
+- name: "Reload Systemd daemons"
+  when:
+    - splunk_service_config_systemd
+  ansible.builtin.systemd:
+    daemon_reload: true

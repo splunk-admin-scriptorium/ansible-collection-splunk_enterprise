@@ -1,0 +1,21 @@
+---
+- name: "List packaged apps"
+  when:
+    - splunk_apps_packaged_apps_dir is defined
+    - splunk_apps_packaged_apps_dir is not none
+    - lookup('ansible.builtin.fileglob', splunk_apps_packaged_apps_dir + '/*' ) != []
+  ansible.builtin.set_fact:
+    _splunk_apps_packaged_apps_list: "{{ lookup('ansible.builtin.fileglob', splunk_apps_packaged_apps_dir + '/*') }}"
+
+- name: "Transfer packaged apps"
+  when:
+    - _splunk_apps_packaged_apps_list is defined
+    - _splunk_apps_packaged_apps_list is iterable
+    - _splunk_apps_packaged_apps_list | length > 0
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: "{{ splunk_apps_home }}/etc/apps/"
+    owner: "{{ splunk_apps_user }}"
+    group: "{{ splunk_apps_group }}"
+    mode: "0600"
+  loop: "{{ _splunk_apps_packaged_apps_list }}"

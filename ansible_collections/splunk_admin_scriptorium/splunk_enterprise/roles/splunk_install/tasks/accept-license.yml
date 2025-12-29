@@ -1,0 +1,26 @@
+---
+- name: "Check license trial status"
+  tags: ['accept_license']
+  ansible.builtin.stat:
+    path: "{{ splunk_install_home }}/etc/licenses/download-trial/enttrial.lic"
+  register: _splunk_enttrial
+
+- name: "Accept trial license"
+  when:
+    - not _splunk_enttrial.stat.exists
+  tags: ['accept_license']
+  ansible.builtin.command:
+    argv:
+      - "{{ splunk_install_home }}/bin/splunk"
+      - "start"
+      - "--accept-license"
+      - "--answer-yes"
+      - "--no-prompt"
+  changed_when: true
+
+- name: "Stop Splunk"
+  when:
+    - not _splunk_enttrial.stat.exists
+  tags: ['accept_license']
+  ansible.builtin.command: "{{ splunk_install_home }}/bin/splunk stop"
+  changed_when: true

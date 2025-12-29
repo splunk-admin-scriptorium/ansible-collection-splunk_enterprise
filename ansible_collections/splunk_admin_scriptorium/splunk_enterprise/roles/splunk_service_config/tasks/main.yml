@@ -1,0 +1,7 @@
+---
+# tasks file for splunk_service_config
+- name: "Install systemd service"
+  ansible.builtin.include_tasks: "systemd-install.yml"
+
+- name: "Configure systemd service limits"
+  ansible.builtin.include_tasks: "systemd-limits.yml"

@@ -1,0 +1,21 @@
+---
+splunk_install_user: "{{ splunk_enterprise_user | default('splunk') }}"
+splunk_install_group: "{{ splunk_enterprise_group | default('splunk') }}"
+splunk_install_home: "{{ splunk_enterprise_home | default('/opt/splunk') }}"
+splunk_install_service_name: "{{ splunk_enterprise_service_name | default('splunkd') }}"
+splunk_install_dbpath: "{{ splunk_enterprise_dbuser | default('/var/opt/splunk/data/') }}"
+
+splunk_install_backup_user: "{{ splunk_enterprise_backup_user | default('root') }}"
+splunk_install_backup_group: "{{ splunk_enterprise_backup_group | default('root') }}"
+
+splunk_install_systemd: true
+
+splunk_install_type: "tgz"
+splunk_install_package_path: "/opt/splunk_install/splunk-10.0.2-e2d18b4767e9-linux-amd64.tgz"
+splunk_install_backup_apps: true
+splunk_install_backup_full: false
+splunk_install_remote_pkg_path: "/root/splunk_install_pkg"
+splunk_install_backup_path: "/var/opt/splunk/backup/"
+
+splunk_install_dirs:
+  - "{{ splunk_install_dbpath }}"

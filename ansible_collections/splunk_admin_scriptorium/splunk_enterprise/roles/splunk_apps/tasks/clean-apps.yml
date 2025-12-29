@@ -1,0 +1,8 @@
+---
+- name: "Remove requested apps"
+  when:
+    - splunk_apps_remove_apps is defined and splunk_apps_remove_apps is iterable and splunk_apps_remove_apps | length > 0
+  ansible.builtin.file:
+    state: "absent"
+    path: "{{ splunk_apps_home }}/etc/apps/{{ item }}"
+  with_items: "{{ splunk_apps_remove_apps | difference(splunk_apps_remove_apps_exclude) }}"

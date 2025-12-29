@@ -1,0 +1,30 @@
+---
+- name: "Splunk Install vars sanity Check"
+  ansible.builtin.assert:
+    that:
+      - splunk_install_package_path is defined
+      - lookup('ansible.builtin.fileglob', splunk_install_package_path) != []
+      - splunk_install_type is defined
+      - splunk_install_user is defined
+      - splunk_install_group is defined
+      - splunk_install_home is defined
+      - splunk_install_service_name is defined
+      - splunk_install_admin_password is defined
+
+- name: "Read service status"
+  when:
+    - splunk_install_systemd is defined
+    - splunk_install_systemd
+  ansible.builtin.systemd:
+    name: "{{ splunk_install_service_name }}"
+  register: _splunk_service_status
+
+- name: "Assert systemd service stopped"
+  when:
+    - splunk_install_systemd is defined
+    - splunk_install_systemd
+  ansible.builtin.assert:
+    that:
+      - _splunk_service_status is defined
+      - _splunk_service_status.status is defined
+      - _splunk_service_status.status.SubState != "running"

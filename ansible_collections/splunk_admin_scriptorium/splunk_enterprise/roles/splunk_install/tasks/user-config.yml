@@ -1,0 +1,22 @@
+---
+
+- name: "Configure Splunk Initial user"
+  when:
+    - _splunk_install_fresh is defined and _splunk_install_fresh
+  ansible.builtin.template:
+    dest: "{{ splunk_install_home }}/etc/system/local/user-seed.conf"
+    src: "user-seed.conf"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0600"
+
+- name: "Fix permissions and ownership for Splunk dirs"
+  when:
+    - splunk_install_dirs is defined
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    state: "directory"
+    recurse: true
+  with_items: "{{ splunk_install_dirs }}"

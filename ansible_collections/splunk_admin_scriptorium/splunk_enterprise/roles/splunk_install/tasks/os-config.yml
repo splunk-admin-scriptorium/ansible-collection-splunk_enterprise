@@ -1,0 +1,33 @@
+---
+- name: "Create group for splunk"
+  ansible.builtin.group:
+    name: "{{ splunk_install_group }}"
+    state: present
+
+- name: "Create user for splunk"
+  ansible.builtin.user:
+    name: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    state: "present"
+    create_home: false
+    home: "{{ splunk_install_home }}"
+    system: true
+    password_lock: true
+    shell: "/usr/bin/false"
+
+- name: "Upload Splunk GPG"
+  when:
+    - splunk_install_type|lower == "rpm"
+  ansible.builtin.copy:
+    dest: "/etc/pki/rpm-gpg/RPM-GPG-KEY-Splunk"
+    src: "RPM-GPG-KEY-Splunk"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: "Configure Splunk GPG"
+  when:
+    - splunk_install_type|lower == "rpm"
+  ansible.builtin.rpm_key:
+    key: "/etc/pki/rpm-gpg/RPM-GPG-KEY-Splunk"
+    state: "present"

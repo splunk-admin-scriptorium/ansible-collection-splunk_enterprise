@@ -1,0 +1,7 @@
+---
+- name: "Splunk Install role sanity Check"
+  ansible.builtin.assert:
+    that:
+      - splunk_apps_user is defined
+      - splunk_apps_group is defined
+      - splunk_apps_home is defined

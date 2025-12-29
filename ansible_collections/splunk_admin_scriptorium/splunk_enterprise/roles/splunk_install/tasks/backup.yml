@@ -1,0 +1,65 @@
+---
+- name: "Generate backup folder name"
+  when:
+    - _splunk_install_upgrade is defined and _splunk_install_upgrade
+  tags: ['backup']
+  ansible.builtin.set_fact:
+    _backup_file_ts: "{{ ansible_facts.date_time.iso8601_micro }}"
+
+- name: "Apps Backup folder"
+  when:
+    - _splunk_install_upgrade is defined and _splunk_install_upgrade
+    - splunk_install_backup_apps is defined and splunk_install_backup_apps
+    - splunk_install_backup_path is defined
+    - _splunk_install_dir_stat.stat.exists
+  tags: ['backup']
+  ansible.builtin.file:
+    path: "{{ splunk_install_backup_path }}/apps/{{ _backup_file_ts }}"
+    owner: "{{ splunk_install_backup_user }}"
+    group: "{{ splunk_install_backup_group }}"
+    mode: "0700"
+    state: "directory"
+
+- name: "Backup Apps"
+  when:
+    - _splunk_install_upgrade is defined and _splunk_install_upgrade
+    - splunk_install_backup_apps is defined and splunk_install_backup_apps
+    - splunk_install_backup_path is defined
+    - _splunk_install_dir_stat.stat.exists
+  tags: ['backup']
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ splunk_install_home }}/etc/apps/"
+    dest: "{{ splunk_install_backup_path }}/apps/{{ _backup_file_ts }}"
+    owner: "{{ splunk_install_backup_user }}"
+    group: "{{ splunk_install_backup_group }}"
+    mode: "preserve"
+
+- name: "Full Backup folder"
+  when:
+    - _splunk_install_upgrade is defined and _splunk_install_upgrade
+    - splunk_install_backup_full is defined and splunk_install_backup_full
+    - splunk_install_backup_path is defined
+    - _splunk_install_dir_stat.stat.exists
+  tags: ['backup']
+  ansible.builtin.file:
+    path: "{{ splunk_install_backup_path }}/full/{{ _backup_file_ts }}"
+    owner: "{{ splunk_install_backup_user }}"
+    group: "{{ splunk_install_backup_group }}"
+    mode: "0700"
+    state: "directory"
+
+- name: "Backup Home"
+  when:
+    - _splunk_install_upgrade is defined and _splunk_install_upgrade
+    - splunk_install_backup_full is defined and splunk_install_backup_full
+    - splunk_install_backup_path is defined
+    - _splunk_install_dir_stat.stat.exists
+  tags: ['backup']
+  ansible.builtin.copy:
+    src: "{{ splunk_install_home }}"
+    dest: "{{ splunk_install_backup_path }}/full/{{ _backup_file_ts }}"
+    remote_src: true
+    owner: "{{ splunk_install_backup_user }}"
+    group: "{{ splunk_install_backup_group }}"
+    mode: "preserve"

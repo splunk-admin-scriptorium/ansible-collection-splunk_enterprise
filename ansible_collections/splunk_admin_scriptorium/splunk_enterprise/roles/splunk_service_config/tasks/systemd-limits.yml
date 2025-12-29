@@ -1,0 +1,63 @@
+---
+- name: "Splunk systemd service base config"
+  when:
+    - splunk_service_config_systemd
+  community.general.ini_file:
+    path: "/etc/systemd/system/{{ splunk_service_config_service_name }}.service"
+    section: "Service"
+    option: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "present"
+    mode: "0600"
+    owner: "root"
+    group: "root"
+  with_items:
+    - { name: LimitDATA, value: "{{ splunk_service_config_limit_memory }}" }
+    - { name: LimitNOFILE, value: "{{ splunk_service_config_limit_nofile }}" }
+    - { name: LimitNPROC, value: "{{ splunk_service_config_limit_nproc }}" }
+    - { name: LimitFSIZE, value: "{{ splunk_service_config_limit_fsize }}" }
+    - { name: TasksMax, value: "{{ splunk_service_config_limit_tasks }}" }
+
+- name: "Splunk systemd service custom vars config"
+  when:
+    - splunk_service_config_systemd
+    - splunk_service_config_systemd_service_vars is defined and splunk_service_config_systemd_service_vars is iterable
+    - splunk_service_config_systemd_service_vars | length > 0
+  community.general.ini_file:
+    path: "/etc/systemd/system/{{ splunk_service_config_service_name }}.service"
+    section: "{{ item.section }}"
+    option: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: "present"
+    mode: "0600"
+    owner: "root"
+    group: "root"
+  with_items: "{{ splunk_service_config_systemd_service_vars }}"
+
+- name: "Splunk systemd service custom vars config"
+  when:
+    - splunk_service_config_systemd
+    - splunk_service_config_required_mounts is defined and splunk_service_config_required_mounts is iterable
+    - splunk_service_config_required_mounts | length > 0
+  community.general.ini_file:
+    path: "/etc/systemd/system/{{ splunk_service_config_service_name }}.service"
+    section: "Unit"
+    option: "After"
+    value: "{{
+              splunk_service_config_required_mounts
+              | map('replace', '/', ' ')
+              | map('trim')
+              | map('replace', ' ', '-')
+              | map('regex_replace', '^(.*)$', '\\1' + '.mount')
+              | join(' ')
+            }}"
+    state: "present"
+    mode: "0600"
+    owner: "root"
+    group: "root"
+
+- name: "Reload Systemd daemons"
+  when:
+    - splunk_service_config_systemd
+  ansible.builtin.systemd:
+    daemon_reload: true

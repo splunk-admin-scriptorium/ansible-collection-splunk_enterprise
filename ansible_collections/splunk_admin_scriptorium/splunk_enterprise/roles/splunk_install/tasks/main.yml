@@ -1,0 +1,27 @@
+---
+# tasks file for splunk_install
+- name: "Perform Sanity Check"
+  ansible.builtin.include_tasks: "sanity-check.yml"
+- name: "Check Current Status"
+  ansible.builtin.include_tasks: "check-install.yml"
+- name: "Configure OS"
+  ansible.builtin.include_tasks: "os-config.yml"
+- name: "Backup config"
+  ansible.builtin.include_tasks: "backup.yml"
+- name: "Install package"
+  ansible.builtin.include_tasks: "package-install.yml"
+- name: "Splunk launch config"
+  ansible.builtin.include_tasks: "splunk-launch-config.yml"
+- name: "User config"
+  ansible.builtin.include_tasks: "user-config.yml"
+
+- name: "Configure Splunk apps"
+  ansible.builtin.include_role:
+    name: "splunk_apps"
+
+- name: "Accept License"
+  ansible.builtin.include_tasks: "accept-license.yml"
+
+- name: "Configure Splunk as service"
+  ansible.builtin.include_role:
+    name: "splunk_service_config"

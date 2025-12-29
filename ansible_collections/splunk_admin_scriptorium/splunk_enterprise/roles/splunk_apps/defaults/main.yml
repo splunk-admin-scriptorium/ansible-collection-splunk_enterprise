@@ -1,0 +1,47 @@
+---
+# defaults file for splunk_apps
+splunk_apps_user: "{{ splunk_enterprise_user | default('splunk') }}"
+splunk_apps_group: "{{ splunk_enterprise_group | default('splunk') }}"
+splunk_apps_home: "{{ splunk_enterprise_home | default('/opt/splunk') }}"
+splunk_apps_service_name: "{{ splunk_enterprise_service_name | default('splunkd') }}"
+
+# List of apps (folders) to be removed
+splunk_apps_remove_apps: []
+# List of apps to exclude from all removal actions
+splunk_apps_remove_apps_exclude: []
+
+# Path containing directories with apps to upload. Matching folders will be removed from Splunk etc/apps first.
+splunk_apps_custom_apps_path: null
+
+# Do NOT remove those from custom apps
+splunk_apps_custom_apps_remove_exclude: []
+
+# Set local/app.conf state=disabled for Splunk builtin apps
+splunk_apps_disable_builtin:
+  - "SplunkDeploymentServerConfig"
+  - "SplunkForwarder"
+  - "SplunkLightForwarder"
+  - "alert_logevent"
+  - "alert_webhook"
+  - "appsbrowser"
+  - "introspection_generator_addon"
+  - "journald_input"
+  - "python_upgrade_readiness_app"
+  - "splunk-dashboard-studio"
+  - "splunk-visual-exporter"
+  - "splunk_app_for_splunk_o11y_cloud"
+  - "splunk_archiver"
+  - "splunk_gdi"
+  - "splunk_instrumentation"
+  - "splunk_metrics_workspace"
+  - "splunk_monitoring_console"
+  - "splunk_pipeline_builders"
+  - "splunk_rapid_diage"
+  - "splunk_secure_gateway"
+
+# Set local/app.conf state=disabled for custom apps
+splunk_apps_disable_custom: []
+# Set local/app.conf state=enabled for custom apps
+splunk_apps_enable_custom: []
+
+splunk_apps_packaged_apps_dir: null

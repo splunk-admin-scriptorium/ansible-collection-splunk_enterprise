@@ -1,0 +1,48 @@
+---
+- name: "Root directory for Splunk package"
+  when:
+    - ( _splunk_install_fresh is defined and _splunk_install_fresh ) or ( _splunk_install_upgrade is defined and _splunk_install_upgrade )
+  ansible.builtin.file:
+    path: "{{ splunk_install_remote_pkg_path }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0700"
+    state: "directory"
+  no_log: true
+
+- name: "Push installation package"
+  when:
+    - ( _splunk_install_fresh is defined and _splunk_install_fresh ) or ( _splunk_install_upgrade is defined and _splunk_install_upgrade )
+  ansible.builtin.copy:
+    src: "{{ splunk_install_package_path }}"
+    dest: "{{ splunk_install_remote_pkg_path }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    mode: "0400"
+
+- name: "Install Splunk - RPM"
+  when:
+    - ( _splunk_install_fresh is defined and _splunk_install_fresh ) or ( _splunk_install_upgrade is defined and _splunk_install_upgrade )
+    - splunk_install_type | lower == "rpm"
+  ansible.builtin.yum:
+    name: "{{ splunk_install_remote_pkg_path }}/{{ splunk_install_package_path | basename }}"
+    state: "present"
+
+- name: "Install Splunk - TGZ"
+  when:
+    - ( _splunk_install_fresh is defined and _splunk_install_fresh ) or ( _splunk_install_upgrade is defined and _splunk_install_upgrade )
+    - splunk_install_type | lower == "tgz"
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "{{ splunk_install_remote_pkg_path }}/{{ splunk_install_package_path | basename }}"
+    dest: "{{ splunk_install_home | dirname }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+
+- name: "Fix permissions and ownership"
+  ansible.builtin.file:
+    path: "{{ splunk_install_home }}"
+    owner: "{{ splunk_install_user }}"
+    group: "{{ splunk_install_group }}"
+    state: "directory"
+    recurse: true
