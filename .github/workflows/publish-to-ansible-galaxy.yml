@@ -1,0 +1,22 @@
+---
+name: 'Publish master to Ansible Galaxy'
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: 'Publish to Ansible Galaxy'
+    runs-on: 'ubuntu-latest'
+    if: ${{ github.event.base_ref == 'refs/heads/master' }}
+    steps:
+      - name: 'checkout'
+        uses: 'actions/checkout@v4'
+      - name: 'galaxy'
+        uses: 'robertdebock/galaxy-action@1.2.1'
+        with:
+          galaxy_api_key: '${{ secrets.ANSIBLE_GALAXY_API_KEY }}'
+          git_branch: 'master'
