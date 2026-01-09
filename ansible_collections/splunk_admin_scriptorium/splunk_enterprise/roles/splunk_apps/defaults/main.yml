@@ -14,7 +14,8 @@ splunk_apps_remove_apps_exclude: []
 splunk_apps_custom_apps_path: null
 
 # Do NOT remove those from custom apps
-splunk_apps_custom_apps_remove_exclude: []
+splunk_apps_custom_apps_remove_exclude:
+  - "splunk_httpinput"
 
 # Set local/app.conf state=disabled for Splunk builtin apps
 splunk_apps_disable_builtin:
