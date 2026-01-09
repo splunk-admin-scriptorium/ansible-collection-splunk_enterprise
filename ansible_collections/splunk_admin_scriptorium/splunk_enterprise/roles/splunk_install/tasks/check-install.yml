@@ -69,6 +69,7 @@
     - _splunk_install_manifest_file_stat.stat.exists
   ansible.builtin.command: "{{ splunk_install_home }}/bin/splunk validate files"
   changed_when: false
+  ignore_errors: true
   register: _splunk_install_validate_files_run
 
 - name: "Dirty install detected"
@@ -77,7 +78,7 @@
     - _splunk_install_validate_files_run.rc is defined
     - _splunk_install_validate_files_run.rc != 0
   ansible.builtin.debug:
-    msg: "{{  _splunk_install_validate_files_run.stdout }}"
+    msg: "{{  _splunk_install_validate_files_run.stderr }}"
 
 - name: "Dirty install detected - proceeding with upgrade"
   when:
