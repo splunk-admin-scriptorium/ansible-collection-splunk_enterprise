@@ -14,18 +14,6 @@
 - name: "Disable custom apps - create app.conf"
   when:
     - splunk_apps_disable_custom is defined
-  ansible.builtin.file:
-    path: "{{ splunk_apps_home }}/etc/apps/{{ item }}/local/app.conf"
-    owner: "{{ splunk_apps_user }}"
-    group: "{{ splunk_apps_group }}"
-    state: "touch"
-    mode: "0600"
-  with_items: "{{ splunk_apps_disable_custom }}"
-  no_log: true
-
-- name: "Disable custom apps"
-  when:
-    - splunk_apps_disable_custom is defined
   community.general.ini_file:
     path: "{{ splunk_apps_home }}/etc/apps/{{ item }}/local/app.conf"
     section: "install"
