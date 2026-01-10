@@ -38,9 +38,9 @@
     - _splunk_apps_custom_apps_tmp_dir.path is not none
   ansible.builtin.file:
     state: "absent"
-    path: "{{ splunk_apps_home }}/etc/apps/{{ item | basename }}"
+    path: "{{ splunk_apps_home }}/etc/apps/{{ item }}"
   with_items: "{{
-                  _splunk_apps_custom_apps_list.files | map(attribute='path')
+                  _splunk_apps_custom_apps_list.files | map(attribute='path') | map('basename')
                   | difference(splunk_apps_remove_apps_exclude)
                   | difference(splunk_apps_custom_apps_remove_exclude)
                 }}"
