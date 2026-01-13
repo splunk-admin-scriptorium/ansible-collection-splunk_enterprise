@@ -5,9 +5,15 @@
     path: "{{ splunk_install_home }}/etc/licenses/download-trial/enttrial.lic"
   register: _splunk_enttrial
 
+- name: "Check first time run status"
+  tags: ['accept_license']
+  ansible.builtin.stat:
+    path: "{{ splunk_install_home }}/ftr"
+  register: _splunk_ftr
+
 - name: "Accept trial license"
   when:
-    - not _splunk_enttrial.stat.exists
+    - (_splunk_ftr.stat is defined and_splunk_ftr.stat.exists) or not _splunk_enttrial.stat.exists
   tags: ['accept_license']
   ansible.builtin.command:
     argv:
@@ -20,7 +26,7 @@
 
 - name: "Stop Splunk"
   when:
-    - not _splunk_enttrial.stat.exists
+    - (_splunk_ftr.stat is defined and_splunk_ftr.stat.exists) or not _splunk_enttrial.stat.exists
   tags: ['accept_license']
   ansible.builtin.command: "{{ splunk_install_home }}/bin/splunk stop"
   changed_when: true
