@@ -18,4 +18,5 @@
     owner: "{{ splunk_apps_user }}"
     group: "{{ splunk_apps_group }}"
     mode: "0600"
-  loop: "{{ _splunk_apps_packaged_apps_list }}"
+  with_items: "{{ _splunk_apps_packaged_apps_list|split(',') }}"
+  # TODO: with_fileglob?
