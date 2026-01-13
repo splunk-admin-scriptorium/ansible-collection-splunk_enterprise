@@ -12,6 +12,8 @@
 
 - name: "Check Manifest"
   when:
+    - _splunk_install_dir_stat is defined
+    - _splunk_install_dir_stat.stat is defined
     - _splunk_install_dir_stat.stat.exists
   ansible.builtin.stat:
     path: "{{ splunk_install_home }}/{{ splunk_install_package_path | basename | replace('.rpm', '-manifest') | replace('.tgz', '-manifest') }}"
@@ -25,6 +27,8 @@
 
 - name: "Check Splunk verions file"
   when:
+    - _splunk_install_dir_stat is defined
+    - _splunk_install_dir_stat.stat is defined
     - _splunk_install_dir_stat.stat.exists
   ansible.builtin.stat:
     path: "{{ splunk_install_home }}/etc/splunk.version"
@@ -32,7 +36,11 @@
 
 - name: "Read Splunk version file"
   when:
+    - _splunk_install_dir_stat is defined
+    - _splunk_install_dir_stat.stat is defined
     - _splunk_install_dir_stat.stat.exists
+    - _splunk_install_version_file_stat is defined
+    - _splunk_install_version_file_stat.stat is defined
     - _splunk_install_version_file_stat.stat.exists
   ansible.builtin.slurp:
     src: "{{ splunk_install_home }}/etc/splunk.version"
@@ -40,15 +48,25 @@
 
 - name: "Get Splunk version"
   when:
+    - _splunk_install_dir_stat is defined
+    - _splunk_install_dir_stat.stat is defined
     - _splunk_install_dir_stat.stat.exists
+    - _splunk_install_version_file_stat is defined
+    - _splunk_install_version_file_stat.stat is defined
     - _splunk_install_version_file_stat.stat.exists
   ansible.builtin.set_fact:
     _splunk_install_version: "{{ (_splunk_install_version_file['content'] | b64decode | regex_search('VERSION=[^\\s]+') | split('='))[1] }}"
 
 - name: "Detected Splunk version"
   when:
+    - _splunk_install_manifest_file_stat is defined
+    - _splunk_install_manifest_file_stat.stat is defined
     - _splunk_install_manifest_file_stat.stat.exists
+    - _splunk_install_dir_stat is defined
+    - _splunk_install_dir_stat.stat is defined
     - _splunk_install_dir_stat.stat.exists
+    - _splunk_install_version_file_stat is defined
+    - _splunk_install_version_file_stat.stat is defined
     - _splunk_install_version_file_stat.stat.exists
   ansible.builtin.debug:
     msg: "Detected Splunk version: {{ _splunk_install_version }}"
@@ -73,6 +91,7 @@
   register: _splunk_install_validate_files_run
 
 - name: "Dirty install detected"
+  tags: ['validate_integrity']
   when:
     - _splunk_install_validate_files_run is defined
     - _splunk_install_validate_files_run.rc is defined
