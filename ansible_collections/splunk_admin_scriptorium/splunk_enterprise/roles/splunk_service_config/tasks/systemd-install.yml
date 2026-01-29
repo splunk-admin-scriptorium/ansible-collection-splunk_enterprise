@@ -33,6 +33,20 @@
     name: "{{ splunk_service_config_service_name }}"
     enabled: true
 
+- name: "Systemd: enable CAP_NET_BIND_SERVICE"
+  when:
+    - splunk_service_config_systemd_enable_cap_net_bind_service is defined
+    - splunk_service_config_systemd_enable_cap_net_bind_service
+  community.general.ini_file:
+    path: "/etc/systemd/system/{{ splunk_service_config_service_name }}.service"
+    section: "Service"
+    option: "AmbientCapabilities"
+    value: "CAP_NET_BIND_SERVICE"
+    state: "present"
+    mode: "0600"
+    owner: "root"
+    group: "root"
+
 - name: "Reload Systemd daemons"
   when:
     - splunk_service_config_systemd

@@ -18,3 +18,5 @@ splunk_service_config_limit_tasks: "{{ splunk_enterprise_service_limit_tasks | d
 splunk_service_config_systemd_service_vars: []
 
 splunk_service_config_required_mounts: []
+
+splunk_service_config_systemd_enable_cap_net_bind_service: false
